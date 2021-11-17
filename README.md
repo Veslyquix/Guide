@@ -11,7 +11,19 @@ EA Terms
 Understanding EA (Event Assembler)
 Goal: Write BYTEs to the rom in fancy ways. 
 
-<span style="color:blue">#define</span> Seth 2 // Seth is character ID of 2. 
+<style>
+r { color: Red }
+o { color: Orange }
+g { color: Green }
+</style>
+
+# TODOs:
+
+- <r>TODO:</r> Important thing to do
+- <o>TODO:</o> Less important thing to do
+- <g>DONE:</g> Breath deeply and improve karma
+
+
 #define Seth 2 // Seth is character ID of 2. 
 
 ![Alt-text](/png/Seth_Str.png?raw=true "Optional Title")
