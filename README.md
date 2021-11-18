@@ -12,102 +12,119 @@ Understanding EA (Event Assembler)
 Goal: Write BYTEs to the rom in fancy ways. 
 
 ```diff
-- text in red
-+ text in green
-! text in orange
-# text in gray
-@@ text in purple (and bold)@@
+- red
++ green
+! orange
+# gray
+@@ purple (and bold)@@
 ```
 
-
-<style>
-r { color: Red }
-o { color: Orange }
-g { color: Green }
-</style>
-
-# TODOs:
-
-- <r>TODO:</r> Important thing to do
-- <o>TODO:</o> Less important thing to do
-- <g>DONE:</g> Breath deeply and improve karma
-
-
-#define Seth 2 // Seth is character ID of 2. 
+```diff
+@@ #define Seth 2 
+// Seth is character ID of 2. 
+```
 
 ![Alt-text](/png/Seth_Str.png?raw=true "Optional Title")
-#define BaseStrOffset 0x0D // We'll need this soon 
 
-EA automatically writes to our CURRENTOFFSET, which is typically at the end of our rom. 
+```diff
+@@ #define BaseStrOffset 0x0D 
+// We'll need this soon 
+```
+
+EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to or more typically at the next part of free space or at the end of our rom. 
 
 
-PUSH and POP are essentially brackets ( ) to put around ORG 
+`PUSH` and `POP` are essentially brackets ( ) to put around `ORG` 
 Eg. 
-PUSH 
-ORG $803DA5 // Character Table - Seth's Str
-BYTE 20 15 // Give him base 20 Str and 15 Skl
-POP 
+```diff
+- PUSH 
+! ORG $803DA5 // Character Table - Seth's Str
++ BYTE (5*4) (5*3) // Give him base 20 Str and 15 Skl
+- POP 
+```
 
-
-Failing to put these around an ORG will brick your resulting rom. 
+Failing to put these around an ```diff ! ORG ``` will brick your resulting rom. 
 
 
 What if we want to write stats to a bunch of characters?
 Your CharacterTable probably starts at $803D30. see root/Tables/Table Definitions.txt
-> #define CharacterTable 0x803D30
+> `#define CharacterTable 0x803D30`
 
 Let's define its size! 
 
 ![Alt-text](/png/CharTableSize.png?raw=true "Optional Title")
 
-#define CharTableSize 52 
+```diff
+@@ #define CharTableSize 52 
+```
 
 Now let's make it easy to edit anyone's base stats. 
 
-#define CurrentChar Franz
-PUSH 
-ORG CharacterTable
-ORG CURRENTOFFSET + (CharTableSize * CurrentChar)
-ORG CURRENTOFFSET + BaseStrOffset
-BYTE 12 // Give Franz base 12 Str 
-POP 
-#undef CurrentChar 
+
+```diff
+@@ #define CurrentChar Franz
+- PUSH
+! ORG CharacterTable
+! ORG CURRENTOFFSET + (CharTableSize * CurrentChar)
+! ORG CURRENTOFFSET + BaseStrOffset
++ BYTE 7+5 // Give Franz base 12 Str 
+- POP 
+@@ #undef CurrentChar 
+```
 
 This absolutely works, but it's not ideal to write out so much every time. Let's consolidate it! 
 
-//#define BaseStatsOffset 0x0C 
-#define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset"
 
-PUSH 
-CharEntry(Gilliam)
-BYTE 13 11 // Base 13 Str and 11 Skl
+```diff
+@@ #define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset"
+``` 
 
-CharEntry(Matthew)
-BYTE 8 14 // Base 8 Str and 14 Skl
-POP 
+```diff
+- PUSH 
+! CharEntry(Gilliam)
++ BYTE $A $B // Base 10 Str and 11 Skl
+
+! CharEntry(Matthew)
++ BYTE 8 14 // Base 8 Str and 14 Skl
+- POP 
+```
 
 Or...
 
-```ea
-#define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP"
+```diff
+@@ #define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP"
 ```
 
 Now we simply type this to edit a unit's base str: 
-CharBaseStr(Eirika, 14) 
-CharBaseStr(Tana, 11) 
-
-However, if we want to also edit skill that comes immediately afterwards, we'd need to create another version of the above macro. 
-
-
-
-
-Adding 
+```diff
++ CharBaseStr(Eirika, 14) 
++ CharBaseStr(Tana, 11) 
+```
+However, this version only edits Str, rather than all the stats in a row. 
 
 
-These commands are mostly used as a sanity check. (Eg. to ensure you remembered to balance your PUSH / POP commands and have been writing to Free Space.
-MESSAGE CURRENTOFFSET  
-PROTECT $789AB // The byte at this address cannot be written to (EA will error). 
-PROTECT $789AB $78A00 // The bytes in this range cannot be written to. 
+
+
+
+These commands are mostly used as a sanity check. (Eg. to ensure you remembered to balance your PUSH / POP commands and have been writing to Free Space, or to check that hacks do not conflict.)
+```diff
+# MESSAGE CURRENTOFFSET  
+# PROTECT $789AB // The byte at this address cannot be written to (EA will error). 
+# PROTECT $789AB $78A00 // The bytes in this range cannot be written to. 
+```
+
+Graphics
+-
+
+Generally speaking, there are 4 steps to this: 
+1. Format image correctly (FEBuilder's "Color Reduction Tool" may be of use here). 
+2. Run the corresponding batch script to process your images.
+3. #incbin them.
+4. Add an entry to the relevant table. 
+
+
+
+
 
 
 
