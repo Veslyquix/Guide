@@ -2,32 +2,32 @@
  
 
 
-File types - 
-.event is a .txt, best viewed in a program like notepad++ or sublime
-How to make notepad++ show certain colours for key words in asm / ea (install these language files into notepad++)
 
-EA Terms 
 
 Understanding EA (Event Assembler)
-Goal: Write BYTEs to the rom in fancy ways. 
+-
+
+Everything in the rom is a `BYTE`, or a digit from $00 to $FF, expressed as 0 to 255 in decimal. Your rom can fit about 32 million of these `BYTE`s, half or so of which is free space. 
+Goal: Write BYTEs to the rom in fancy ways to minimize work in making a hack. 
+
+.event is a .txt, best viewed in a program like notepad++ or sublime.
+
+Note: I like colours, as I think they improve readability. If you see `-`, `+`, `!`, `#`, or `@@` at the start of a line, that is purely for colours to show up. Please remove them if you copy any snippets of code from this guide. 
+
+To make your event or asm files also have pretty colours for key words, please install these language files to your text editor:
+https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
+https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
+
 
 ```diff
-- red
-+ green
-! orange
-# gray
-@@ purple (and bold)@@
-```
-
-```diff
-@@ #define Seth 2 
+@@ #define Seth 2 @@
 // Seth is character ID of 2. 
 ```
 
 ![Alt-text](/png/Seth_Str.png?raw=true "Optional Title")
 
 ```diff
-@@ #define BaseStrOffset 0x0D 
+@@ #define BaseStrOffset 0x0D @@
 // We'll need this soon 
 ```
 
@@ -43,7 +43,7 @@ Eg.
 - POP 
 ```
 
-Failing to put these around an ```diff ! ORG ``` will brick your resulting rom. 
+Failing to put these around an `ORG` will brick your resulting rom. 
 
 
 What if we want to write stats to a bunch of characters?
@@ -55,28 +55,28 @@ Let's define its size!
 ![Alt-text](/png/CharTableSize.png?raw=true "Optional Title")
 
 ```diff
-@@ #define CharTableSize 52 
+@@ #define CharTableSize 52 @@
 ```
 
 Now let's make it easy to edit anyone's base stats. 
 
 
 ```diff
-@@ #define CurrentChar Franz
+@@ #define CurrentChar Franz @@
 - PUSH
 ! ORG CharacterTable
 ! ORG CURRENTOFFSET + (CharTableSize * CurrentChar)
 ! ORG CURRENTOFFSET + BaseStrOffset
 + BYTE 7+5 // Give Franz base 12 Str 
 - POP 
-@@ #undef CurrentChar 
+@@ #undef CurrentChar @@ 
 ```
 
 This absolutely works, but it's not ideal to write out so much every time. Let's consolidate it! 
 
 
 ```diff
-@@ #define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset"
+@@ #define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset" @@
 ``` 
 
 ```diff
@@ -92,7 +92,7 @@ This absolutely works, but it's not ideal to write out so much every time. Let's
 Or...
 
 ```diff
-@@ #define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP"
+@@ #define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP" @@
 ```
 
 Now we simply type this to edit a unit's base str: 
@@ -101,6 +101,10 @@ Now we simply type this to edit a unit's base str:
 + CharBaseStr(Tana, 11) 
 ```
 However, this version only edits Str, rather than all the stats in a row. 
+
+Typically for repetitive tasks, we write out **macros** like the above ones to consolidate. In this case, most users edit Character & Class data in a .CSV file. 
+For large tables we usually use **.CSV** (which can be processed as part of MAKEHACK_FULL), while for smaller ones and frequent commands we use **macros**. 
+
 
 
 
@@ -119,14 +123,34 @@ Graphics
 Generally speaking, there are 4 steps to this: 
 1. Format image correctly (FEBuilder's "Color Reduction Tool" may be of use here). 
 2. Run the corresponding batch script to process your images.
-3. #incbin them.
+3. #incbin them. Some installers can be generated automatically. Please see this: https://github.com/Veslyquix/EasyBuildfile/tree/main/Graphics
 4. Add an entry to the relevant table. 
 
 
+To `POIN` or not to `POIN`? 
+-
+$00123456 vs $08123456 
+`ORG` does not include the `8` or `9` at the start. But we need it the rest of the time. 
+Therefore, we define `IsPointer` as `0x8000000` and append it sometimes. 
+
+```diff
+! ALIGN 4
+@@ ImageData: @@
++ #incbin "Filename.dmp"
+
+@@ TableOfImages: @@
++ POIN ImageData
+
+// Or we could do:
+@@ TableOfImages: @@
++ WORD ImageData|IsPointer
+
+```
 
 
 
 
+Rough stuff to cover: 
 
 #define 
 #ifdef 
@@ -141,7 +165,7 @@ Hooks
 General layout of skillsys buildfile 
 
 Tables - two main ways to edit a vanilla or custom table: 
-- Using .CSV files which can be processed as part of MAKEHACK_FULL 
+- Using .CSV files 
 - or using a macro 
 
 While you could make a table like this: 
@@ -171,10 +195,10 @@ Byte - two digits (eg. 0x7F = 127 = b11,111,111)
 Bit - 1/8th of a byte (b01,111,111) 
 
 Bitfield: 
-Instead of counting to 255 with a byte, we instead use each bit as a yes / no flag. 
+Instead of counting to 255 with a byte, we instead use each bit in binary as a yes / no flag. 
 
 
-Your rom starts at 16 megabytes (16 million bytes) and can be expanded up to 32 mb. 
-This free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of gba screen sized video. With compression
+Your rom starts at 16 megabytes and can be expanded up to 32 mb. 
+This free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of gba screen sized video. You may be able to squeeze more in with compression, but when it comes to graphics & sound, we must be efficient with data. 
 
 
