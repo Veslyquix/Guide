@@ -247,10 +247,10 @@ A Label marks an address, while a definition lets a written word equate to a num
 #define MyDefinition 13 // I'm unlucky 
 
 PUSH 
-ORG $12345 
+ORG $6789A
 
 ALIGN 4
-MyLabel: // Equivalent to $12345, as we just ORG'd there. 
+MyLabel: // Equivalent to $6789C, as it's the next multiple of 4 after where we ORG'd to. 
 BYTE MyDefinition // Write the byte $0D (13) at this address. 
 POP 
 ```
