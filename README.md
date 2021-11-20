@@ -1,33 +1,40 @@
 # Guide
  
 
-
-
-
 Understanding EA (Event Assembler)
 -
 
-Everything in the rom is a `BYTE`, or a digit from $00 to $FF, expressed as 0 to 255 in decimal. Your rom can fit about 32 million of these `BYTE`s, half or so of which is free space. 
-Goal: Write BYTEs to the rom in fancy ways to minimize work in making a hack. 
+Your .gba rom is made up of `BYTE`s, or digits from $00 to $FF, expressed as 0 to 255 in decimal. It is mostly unintelligable. 
+
+![Alt-text](/png/Gibberish.png?raw=true "Optional Title")
+
+But I don't understand the hex data! Is this a problem? 
+
+Good. Raw hex data is not supposed to be read by humans. 
+
+Your rom can fit about 32 million of these `BYTE`s, half or so of which is free space. 
+
+- Goal: Write BYTEs to the rom in fancy ways to minimize work in making a hack. 
+
 
 .event is a .txt, best viewed in a program like notepad++ or sublime.
 
-Note: I like colours, as I think they improve readability. If you see `-`, `+`, `!`, `#`, or `@@` at the start of a line, that is purely for colours to show up. Please remove them if you copy any snippets of code from this guide. 
 
-To make your event or asm files also have pretty colours for key words, please install these language files to your text editor:
-https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
-https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
+In EA, numbers are written in decimal unless prefixed by 0x or $. 
+Eg. 
+30 = #0x1E
+255 = $FF 
+Calc.exe can convert between hex and dec in Programmer mode. We'll mostly use decimal. 
 
 
-```diff
-@@ #define Seth 2 @@
+
+`#define Seth 2`
 // Seth is character ID of 2. 
-```
+
 
 ![Alt-text](/png/Seth_Str.png?raw=true "Optional Title")
 
-```diff
-@@ #define BaseStrOffset 0x0D @@
+`#define BaseStrOffset 0x0D `
 // We'll need this soon 
 ```
 
@@ -35,70 +42,73 @@ EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to 
 
 
 `PUSH` and `POP` are essentially brackets ( ) to put around `ORG` 
+
 Eg. 
-```diff
-- PUSH 
-! ORG $803DA5 // Character Table - Seth's Str
-+ BYTE (5*4) (5*3) // Give him base 20 Str and 15 Skl
-- POP 
+```
+PUSH 
+ORG $803DA5 // Character Table - Seth's Str
+BYTE 7+5 10+3 // Give him base 12 Str and 13 Skl
+POP 
 ```
 
 Failing to put these around an `ORG` will brick your resulting rom. 
 
 
 What if we want to write stats to a bunch of characters?
+
 Your CharacterTable probably starts at $803D30. see root/Tables/Table Definitions.txt
+
 > `#define CharacterTable 0x803D30`
 
 Let's define its size! 
 
 ![Alt-text](/png/CharTableSize.png?raw=true "Optional Title")
 
-```diff
-@@ #define CharTableSize 52 @@
+```
+#define CharTableSize 52
 ```
 
 Now let's make it easy to edit anyone's base stats. 
 
 
-```diff
-@@ #define CurrentChar Franz @@
-- PUSH
-! ORG CharacterTable
-! ORG CURRENTOFFSET + (CharTableSize * CurrentChar)
-! ORG CURRENTOFFSET + BaseStrOffset
-+ BYTE 7+5 // Give Franz base 12 Str 
-- POP 
-@@ #undef CurrentChar @@ 
+```
+#define CurrentChar Franz
+PUSH
+ORG CharacterTable
+ORG CURRENTOFFSET + (CharTableSize * CurrentChar)
+ORG CURRENTOFFSET + BaseStrOffset
+BYTE (5*2) // Give Franz base 10 Str 
+POP 
+#undef CurrentChar
 ```
 
 This absolutely works, but it's not ideal to write out so much every time. Let's consolidate it! 
 
 
-```diff
-@@ #define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset" @@
+```
+#define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset"
 ``` 
 
-```diff
-- PUSH 
-! CharEntry(Gilliam)
-+ BYTE $A $B // Base 10 Str and 11 Skl
+```
+PUSH 
+CharEntry(Gilliam)
+BYTE $A $B // Base 10 Str and 11 Skl
 
-! CharEntry(Matthew)
-+ BYTE 8 14 // Base 8 Str and 14 Skl
-- POP 
+CharEntry(Matthew)
+BYTE 8 14 // Base 8 Str and 14 Skl
+POP 
 ```
 
 Or...
 
-```diff
-@@ #define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP" @@
+```
+#define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP"
 ```
 
 Now we simply type this to edit a unit's base str: 
-```diff
-+ CharBaseStr(Eirika, 14) 
-+ CharBaseStr(Tana, 11) 
+```
+CharBaseStr(Eirika, 14) 
+CharBaseStr(Tana, 11) 
 ```
 However, this version only edits Str, rather than all the stats in a row. 
 
@@ -108,16 +118,7 @@ For large tables we usually use **.CSV** (which can be processed as part of MAKE
 
 
 
-
-
-These commands are mostly used as a sanity check. (Eg. to ensure you remembered to balance your PUSH / POP commands and have been writing to Free Space, or to check that hacks do not conflict.)
-```diff
-# MESSAGE CURRENTOFFSET  
-# PROTECT $789AB // The byte at this address cannot be written to (EA will error). 
-# PROTECT $789AB $78A00 // The bytes in this range cannot be written to. 
-```
-
-Graphics
+Graphics Overview
 -
 
 Generally speaking, there are 4 steps to this: 
@@ -126,79 +127,210 @@ Generally speaking, there are 4 steps to this:
 3. #incbin them. Some installers can be generated automatically. Please see this: https://github.com/Veslyquix/EasyBuildfile/tree/main/Graphics
 4. Add an entry to the relevant table. 
 
+Warning!
+Your ~16+ mb of free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of uncompressed gba screen sized video. You may be able to squeeze longer lengths in with compression, but when it comes to graphics & sound, we must be efficient with the data. 
+
 
 To `POIN` or not to `POIN`? 
 -
 $00123456 vs $08123456 
-`ORG` does not include the `8` or `9` at the start. But we need it the rest of the time. 
-Therefore, we define `IsPointer` as `0x8000000` and append it sometimes. 
+`ORG` does not include the `8` or `9` at the start. But we need it the rest of the time when referring to an address. 
+Therefore, we use POIN while using EA, or we use the defined `IsPointer` (as `0x8000000`) and append it in CSV cells. 
 
-```diff
-! ALIGN 4
-@@ ImageData: @@
-+ #incbin "Filename.dmp"
+```
+ALIGN 4
+ImageData:
+#incbin "Filename.dmp"
 
-@@ TableOfImages: @@
-+ POIN ImageData
+TableOfImages:
+POIN ImageData
 
 // Or we could do:
-@@ TableOfImages: @@
-+ WORD ImageData|IsPointer
+TableOfImages:
+WORD ImageData|IsPointer
+```
 
+`#incbin "filename.dmp"` will write the contained hex data to your rom. Similarly, `#include "filename.lyn.event"` and `#incext "filename.png" png2dmp` will install hex data. 
+
+
+
+Text
+-
+
+Text is typically only edited within the `Root/Text` subfolder. You *can* use the String("Text") macro for the rare simple thing, but I believe it's only useful for raw text (eg. lacking shortforms like [OpenRight]). 
+
+![Alt-text](/png/TextFolderLayout.png?raw=true "Optional Title")
+
+`InstallTextData.event` and `TextDefinitions.event` are generated and should not be edited. 
+
+Within `text_buildfile.txt` you can `#include "folder/filename.txt"` to better organize your files. 
+
+You may sometimes edit `ParseDefinitions.txt` to add new shortforms for loading a specific portrait. 
+[LoadInnes] = [LoadFace][0xf][0x1]
+
+Text uses specific formatting that I won't go into detail on here, but as a quick and dirty introduction:
+```
+# 0x0903 // Text ID 
+Text goes here.[N]
+And here.[A][X]
+
+## OpeningDialogue // "OpeningDialogue" will become a definition
+Welcome to the[N]
+world of Pokemon![A][X]
+```
+
+In `TextDefinitions.event`, we'll see:
+`#define OpeningDialogue $904`, such that we don't need to remember text IDs. 
+
+We can also use NarrowFont (if it's installed).
+
+```
+#0x955 SteelGreatlanceName ^
+Steel Greatlance[X]
+```
+
+Trainer Tips: Be careful not to have a space after [X], as TextProcess will error! 
+
+Further reading: https://feuniverse.us/t/the-ins-and-outs-of-text-editing/6820
+
+
+Chapter Events
+-
+Sme wrote an excellent guide on this. You must read it. https://feuniverse.us/t/fe8-ea-eventing-guide/7080
+
+I don't have much helpful advice here. I suggest organizing one chapter to your preference and then using it as a template. 
+
+You can also use custom definitions here to make things easier on yourself. 
+Eg.
+```
+#define GenericEnemyLevel 3 
+...
+GenericEnemyUnitGroup:
+UNIT 0x50  Brigand 0x0 Level(GenericEnemyLevel+1, Enemy, 1)   [8,3] 0b 0x0 0x01 REDA8R3 [IronAxe,0x0,0x0,0x0] AttackInRangeAI 		// Level 4
+UNIT ONeil Brigand 0x0 Level(GenericEnemyLevel+2, Enemy, 1)   [10,5] 0b 0x0 0x00 0x00   [SteelAxe,0x0,0x0,0x0] NeverMoveAI 		// Level 5
+UNIT 0x50  Brigand 0x0 Level(GenericEnemyLevel,   Enemy, 1)   [5,2] 0b 0x0 0x01 REDA5R2 [IronAxe,0x0,0x0,0x0] PursueWithoutHeedAI // Level 3
+UNIT
+...
+#undef GenericEnemyLevel // So we can use the same definition next chapter. 
 ```
 
 
 
 
-Rough stuff to cover: 
+Labels vs Definitions
+-
+A Label marks an address, while a definition lets a written word equate to a number. 
 
-#define 
-#ifdef 
-#ifndef 
+
+```
+#define MyDefinition 13 // I'm unlucky 
+
+PUSH 
+ORG $12345 
+
+ALIGN 4
+MyLabel: // Equivalent to $12345, as we just ORG'd there. 
+BYTE MyDefinition // Write the byte $0D (13) at this address. 
+POP 
+```
+
+Labels are usually put after `ALIGN 4` and have a colon : at the end of them.
+
+Neither a label nor definition actually adds any data to the rom. 
+
+
+Conditional Installing
+-
+`#ifdef` and `#ifndef` lets you install something or not based on whether a definition has been made or not. 
+
+```
+#ifdef MyDefinition 
+	#include "EngineHacks/AoE/Installer.event"
 #endif 
-|IsPointer 
-ALIGN 4 
-labels 
-Macros
-Hooks 
-(jumpToHack etc.) 
-General layout of skillsys buildfile 
 
-Tables - two main ways to edit a vanilla or custom table: 
-- Using .CSV files 
-- or using a macro 
 
-While you could make a table like this: 
-// Required Level, GaidenSpell 
-BYTE 20 Fire 
-BYTE 0 0
+#ifndef AnotherDefinition
+	#define AnotherDefinition MyDefinition // Now they're both 13
+#endif 
+```
 
-It is generally more readable with bigger tables to use macros, such as: 
-GaidenSpellEntry(Level, Spell)
 
-Your .gba rom is made up of purely hex data. It is mostly unintelligable like this, except for the occasional POIN. 
-#incbin "filename.dmp" will write the contained hex data to your rom. Similarly, #include "filename.lyn.event" and #incext "filename.png" png2dmp will install hex data. 
-
-In EA, numbers are written in decimal unless prefixed by 0x or $. 
-Eg. 
-30 = #0x1E
-255 = $FF 
-Calc.exe can convert between hex and dec in Programmer mode 
-
-Faq - I don't understand the hex data. Is this a problem? 
-Good. Raw hex data is not supposed to be read by humans. 
+Additional terms:
+-
 
 Word - 4 bytes 
 Short - 2 bytes 
-27 = 0x1B = b00011011
-Byte - two digits (eg. 0x7F = 127 = b11,111,111) 
-Bit - 1/8th of a byte (b01,111,111) 
+Byte - two digits (eg. 27 = **0x1B** = b00011011) 
+Bit - 1/8th of a byte, or one digit of the byte when expressed in binary.
 
 Bitfield: 
-Instead of counting to 255 with a byte, we instead use each bit in binary as a yes / no flag. 
+Instead of counting to 255 with a byte, we use each bit in binary as a yes / no flag. 
 
 
-Your rom starts at 16 megabytes and can be expanded up to 32 mb. 
-This free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of gba screen sized video. You may be able to squeeze more in with compression, but when it comes to graphics & sound, we must be efficient with data. 
+
+
+
+
+
+More Commands
+-
+
+These commands are mostly used as a sanity check. (Eg. to ensure you remembered to balance your PUSH / POP commands and have been writing to Free Space, or to check that hacks do not conflict.)
+```
+MESSAGE CURRENTOFFSET  
+PROTECT $789AB // The byte at this address cannot be written to (EA will error). 
+PROTECT $789AB $78A00 // The bytes in this range cannot be written to. 
+```
+
+Resources
+-
+
+To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
+https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
+https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
+
+
+
+
+
+Advanced
+-
+Do not bother reading this section until you actually want to do asm yourself. 
+
+Injecting Custom Code
+-
+
+If you want to change the mechanics of the game, you want to **hook** an address (which must be ALIGN 4'd aka ending in 0, 4, 8, or C), or replace a vanilla `POIN`. 
+ASM wise, you want to ensure there's a free register to use and that you `PUSH` & `POP` registers you use. You can then return to the vanilla function if desired by loading the address into a register, and `bx`ing to it, or by `POP`ing `lr` into a **scratch** register and `bx`ing to it. 
+
+Finding a POIN: 
+0x8034314 CanUnitUseVisit // From FE8_Clean.sym
+08 03 43 14 -> 14 43 03 08 // Little Endian 
+Search FE8_Clean.gba with HxD.exe for `14 43 03 08` or `15 43 03 08`. (It must be ALIGN 4'd aka at an address that ends in 0, 4, 8, or C.)
+In this case, nothing was found, so there are no POINs to it, and our only option is to hook it. 
+
+```
+PUSH 
+ORG $2AAD0 
+callHack_r3(StabBonusFunc|1) // When using asm / thumb, addresses must end in 1, 5, 9, or D. `|1` achieves this. 
+
+ORG $9B788 
+jumpToHack_r2(DisplayDurabilitySupply) 
+SHORT 0x46C0 // NOP out `ldrh r6, [r0]` 
+POP
+
+ALIGN 4 
+StabBonusFunc: // Address will end in 0, 4, 8, or C, so references to it must include `|1` at the end. 
+#incbin "StabBonus.dmp"
+
+#include "DisplayDurabilitySupply.lyn.event"
+```
+
+
+
+
+
+
+
 
 
