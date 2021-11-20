@@ -132,7 +132,7 @@ For large tables we usually use **.CSV** (which can be processed as part of MAKE
 Graphics Overview
 -
 
-Generally speaking, there are 4 steps to this: 
+Generally speaking, these are the steps: 
 
 1. Format image correctly (FEBuilder's "Color Reduction Tool" may be of use here). 
 2. Run the corresponding batch script to process your images.
@@ -281,8 +281,11 @@ Additional terms:
 -
 
 Word - 4 bytes 
+
 Short - 2 bytes 
+
 Byte - two digits (eg. 27 = **0x1B** = b00011011) 
+
 Bit - 1/8th of a byte, or one digit of the byte when expressed in binary.
 
 Bitfield: 
