@@ -85,8 +85,8 @@ Now let's make it easy to edit anyone's base stats.
 #define CurrentChar Franz
 PUSH
 ORG CharacterTable
-ORG CURRENTOFFSET + (CharTableSize * CurrentChar)
-ORG CURRENTOFFSET + BaseStrOffset
+ORG CURRENTOFFSET + (CharTableSize * CurrentChar) // Each entry has 52 bytes, so the character entry we want is equal to Size*CharacterID. 
+ORG CURRENTOFFSET + BaseStrOffset // Now we go forward $0D bytes to get to Str.  
 BYTE (5*2) // Give Franz base 10 Str 
 POP 
 #undef CurrentChar
@@ -98,6 +98,7 @@ This absolutely works, but it's not ideal to write out so much every time. Let's
 ```
 #define CharEntry(CharID) "ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset"
 ``` 
+We've put all of the ORG part into one line now, as the math could be done without `CURRENTOFFSET`. 
 
 ```
 PUSH 
@@ -114,6 +115,7 @@ Or...
 ```
 #define CharBaseStr(CharID, Value) "PUSH; ORG CharacterTable + (CharTableSize * CharID) + BaseStrOffset; BYTE Value; POP"
 ```
+We've added all lines into our command by using `;` for line breaks. 
 
 Now we simply type this to edit a unit's base str: 
 ```
@@ -126,6 +128,28 @@ Typically for repetitive tasks, we write out **macros** like the above ones to c
 
 For large tables we usually use **.CSV** (which can be processed as part of MAKEHACK_FULL), while for smaller ones and frequent commands we use **macros**. 
 
+
+Labels vs Definitions
+-
+
+A Label marks an address, while a definition lets a written word equate to a number. 
+
+
+```
+#define MyDefinition 13 // I'm unlucky 
+
+PUSH 
+ORG $6789A
+
+ALIGN 4
+MyLabel: // Equivalent to $6789C, as it's the next multiple of 4 after where we ORG'd to. 
+BYTE MyDefinition // Write the byte $0D (13) at this address. 
+POP 
+```
+
+Labels are usually put after `ALIGN 4` and have a colon : at the end of them.
+
+Neither a label nor definition actually adds any data to the rom. 
 
 
 
@@ -237,27 +261,6 @@ UNIT
 
 
 
-Labels vs Definitions
--
-
-A Label marks an address, while a definition lets a written word equate to a number. 
-
-
-```
-#define MyDefinition 13 // I'm unlucky 
-
-PUSH 
-ORG $6789A
-
-ALIGN 4
-MyLabel: // Equivalent to $6789C, as it's the next multiple of 4 after where we ORG'd to. 
-BYTE MyDefinition // Write the byte $0D (13) at this address. 
-POP 
-```
-
-Labels are usually put after `ALIGN 4` and have a colon : at the end of them.
-
-Neither a label nor definition actually adds any data to the rom. 
 
 
 Conditional Installing
