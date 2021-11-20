@@ -14,6 +14,7 @@ Good. Raw hex data is not supposed to be read by humans.
 
 Your rom can fit about 32 million of these `BYTE`s, half or so of which is free space. 
 
+
 - Goal: Write BYTEs to the rom in fancy ways to minimize work in making a hack. 
 
 
@@ -21,22 +22,29 @@ Your rom can fit about 32 million of these `BYTE`s, half or so of which is free 
 
 
 In EA, numbers are written in decimal unless prefixed by 0x or $. 
-Eg. 
+
+Eg.
+``` 
 30 = #0x1E
 255 = $FF 
+```
+
 Calc.exe can convert between hex and dec in Programmer mode. We'll mostly use decimal. 
 
 
 
 `#define Seth 2`
+
 // Seth is character ID of 2. 
 
 
 ![Alt-text](/png/Seth_Str.png?raw=true "Optional Title")
 
 `#define BaseStrOffset 0x0D `
+
 // We'll need this soon 
-```
+
+
 
 EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to or more typically at the next part of free space or at the end of our rom. 
 
@@ -44,6 +52,7 @@ EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to 
 `PUSH` and `POP` are essentially brackets ( ) to put around `ORG` 
 
 Eg. 
+
 ```
 PUSH 
 ORG $803DA5 // Character Table - Seth's Str
@@ -63,6 +72,7 @@ Your CharacterTable probably starts at $803D30. see root/Tables/Table Definition
 Let's define its size! 
 
 ![Alt-text](/png/CharTableSize.png?raw=true "Optional Title")
+
 
 ```
 #define CharTableSize 52
@@ -113,6 +123,7 @@ CharBaseStr(Tana, 11)
 However, this version only edits Str, rather than all the stats in a row. 
 
 Typically for repetitive tasks, we write out **macros** like the above ones to consolidate. In this case, most users edit Character & Class data in a .CSV file. 
+
 For large tables we usually use **.CSV** (which can be processed as part of MAKEHACK_FULL), while for smaller ones and frequent commands we use **macros**. 
 
 
@@ -122,19 +133,24 @@ Graphics Overview
 -
 
 Generally speaking, there are 4 steps to this: 
+
 1. Format image correctly (FEBuilder's "Color Reduction Tool" may be of use here). 
 2. Run the corresponding batch script to process your images.
 3. #incbin them. Some installers can be generated automatically. Please see this: https://github.com/Veslyquix/EasyBuildfile/tree/main/Graphics
 4. Add an entry to the relevant table. 
 
 Warning!
+
 Your ~16+ mb of free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of uncompressed gba screen sized video. You may be able to squeeze longer lengths in with compression, but when it comes to graphics & sound, we must be efficient with the data. 
 
 
 To `POIN` or not to `POIN`? 
 -
+
 $00123456 vs $08123456 
+
 `ORG` does not include the `8` or `9` at the start. But we need it the rest of the time when referring to an address. 
+
 Therefore, we use POIN while using EA, or we use the defined `IsPointer` (as `0x8000000`) and append it in CSV cells. 
 
 ```
@@ -169,6 +185,7 @@ You may sometimes edit `ParseDefinitions.txt` to add new shortforms for loading 
 [LoadInnes] = [LoadFace][0xf][0x1]
 
 Text uses specific formatting that I won't go into detail on here, but as a quick and dirty introduction:
+
 ```
 # 0x0903 // Text ID 
 Text goes here.[N]
@@ -182,7 +199,7 @@ world of Pokemon![A][X]
 In `TextDefinitions.event`, we'll see:
 `#define OpeningDialogue $904`, such that we don't need to remember text IDs. 
 
-We can also use NarrowFont (if it's installed).
+We can also use NarrowFont (if it's installed):
 
 ```
 #0x955 SteelGreatlanceName ^
@@ -196,12 +213,15 @@ Further reading: https://feuniverse.us/t/the-ins-and-outs-of-text-editing/6820
 
 Chapter Events
 -
+
 Sme wrote an excellent guide on this. You must read it. https://feuniverse.us/t/fe8-ea-eventing-guide/7080
 
 I don't have much helpful advice here. I suggest organizing one chapter to your preference and then using it as a template. 
 
 You can also use custom definitions here to make things easier on yourself. 
+
 Eg.
+
 ```
 #define GenericEnemyLevel 3 
 ...
@@ -219,6 +239,7 @@ UNIT
 
 Labels vs Definitions
 -
+
 A Label marks an address, while a definition lets a written word equate to a number. 
 
 
@@ -241,6 +262,7 @@ Neither a label nor definition actually adds any data to the rom.
 
 Conditional Installing
 -
+
 `#ifdef` and `#ifndef` lets you install something or not based on whether a definition has been made or not. 
 
 ```
@@ -264,6 +286,7 @@ Byte - two digits (eg. 27 = **0x1B** = b00011011)
 Bit - 1/8th of a byte, or one digit of the byte when expressed in binary.
 
 Bitfield: 
+
 Instead of counting to 255 with a byte, we use each bit in binary as a yes / no flag. 
 
 
@@ -276,6 +299,7 @@ More Commands
 -
 
 These commands are mostly used as a sanity check. (Eg. to ensure you remembered to balance your PUSH / POP commands and have been writing to Free Space, or to check that hacks do not conflict.)
+
 ```
 MESSAGE CURRENTOFFSET  
 PROTECT $789AB // The byte at this address cannot be written to (EA will error). 
@@ -286,7 +310,9 @@ Resources
 -
 
 To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
+
 https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
+
 https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
 
 
@@ -295,6 +321,7 @@ https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
 
 Advanced
 -
+
 Do not bother reading this section until you actually want to do asm yourself. 
 
 Injecting Custom Code
@@ -304,9 +331,13 @@ If you want to change the mechanics of the game, you want to **hook** an address
 ASM wise, you want to ensure there's a free register to use and that you `PUSH` & `POP` registers you use. You can then return to the vanilla function if desired by loading the address into a register, and `bx`ing to it, or by `POP`ing `lr` into a **scratch** register and `bx`ing to it. 
 
 Finding a POIN: 
+
 0x8034314 CanUnitUseVisit // From FE8_Clean.sym
+
 08 03 43 14 -> 14 43 03 08 // Little Endian 
+
 Search FE8_Clean.gba with HxD.exe for `14 43 03 08` or `15 43 03 08`. (It must be ALIGN 4'd aka at an address that ends in 0, 4, 8, or C.)
+
 In this case, nothing was found, so there are no POINs to it, and our only option is to hook it. 
 
 ```
