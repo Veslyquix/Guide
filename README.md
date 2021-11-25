@@ -28,10 +28,12 @@ Table of Contents
 
 Understanding EA (Event Assembler)  
 -
-<p align="right" style="font-size:30px">
+element {
+  font-size: 200;
+<p align="right">
 <a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
 </p>
-
+}
 
 Your .gba rom is made up of `BYTE`s, or digits from $00 to $FF, expressed as 0 to 255 in decimal. It is mostly unintelligable. 
 
