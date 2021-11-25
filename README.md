@@ -186,6 +186,8 @@ For large tables we usually use **.CSV** (which can be processed as part of MAKE
 
 Labels vs Definitions
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 A Label marks an address, while a definition lets a written word equate to a number. 
 
@@ -214,6 +216,8 @@ Neither a label nor definition actually adds any data to the rom.
 
 Graphics Overview
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 Generally speaking, these are the steps: 
 
@@ -259,6 +263,8 @@ WORD ImageData|IsPointer
 
 Text
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 Text is typically only edited within the `Root/Text` subfolder. You *can* use the String("Text") macro for the rare simple thing, but I believe it's only useful for raw text (eg. lacking shortforms like [OpenRight]). 
 
@@ -302,6 +308,8 @@ Further reading: https://feuniverse.us/t/the-ins-and-outs-of-text-editing/6820
 
 Chapter Events
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 Sme wrote an excellent guide on this. You must read it. https://feuniverse.us/t/fe8-ea-eventing-guide/7080
 
@@ -333,6 +341,8 @@ REDA definitions can be found from Snek's asm thread.
 
 Conditional Installing
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 `#ifdef` and `#ifndef` lets you install something or not based on whether a definition has been made or not. 
 
@@ -352,6 +362,8 @@ Conditional Installing
 
 Additional terms:
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 Word - 4 bytes 
 
@@ -397,6 +409,8 @@ PROTECT $789AB $78A00 // The bytes in this range cannot be written to.
 
 Item Icons
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 ![Alt-text](/png/ItemIconsPreview.png?raw=true "Optional Title")
 
@@ -427,6 +441,8 @@ You can now refer to these definitions in your ItemTable.csv to make items use s
 
 Map Sprites
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 Put standing map sprites into the `sms` folder and moving map sprites into the `mms` folder. 
 
@@ -455,6 +471,8 @@ SMS is set in your ClassTable.CSV, and you can now use the definitions you added
 
 Resources
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
 
@@ -467,6 +485,8 @@ https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
 
 Advanced
 -
+| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
+|----------------------------|
 
 Do not bother reading this section until you actually want to do asm yourself. 
 
