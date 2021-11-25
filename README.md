@@ -28,9 +28,10 @@ Table of Contents
 
 Understanding EA (Event Assembler)  
 -
+<p align="center">
 | [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
 |----------------------------|
-
+</p>
 
 
 Your .gba rom is made up of `BYTE`s, or digits from $00 to $FF, expressed as 0 to 255 in decimal. It is mostly unintelligable. 
@@ -471,8 +472,10 @@ SMS is set in your ClassTable.CSV, and you can now use the definitions you added
 
 Resources
 -
+<p align="center">
 | [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
 |----------------------------|
+</p>
 
 To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
 
