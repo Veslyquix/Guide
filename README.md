@@ -28,6 +28,7 @@ Table of Contents
 <p align="right">
 <a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
 </p>
+
 Understanding EA (Event Assembler)  
 -
 
