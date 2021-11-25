@@ -142,12 +142,12 @@ PUSH
 ORG $6789A
 
 ALIGN 4
-MyLabel: // Equivalent to $6789C, as it's the next multiple of 4 after where we ORG'd to. 
+MyLabel: // Equivalent to $6789C, as it's the next multiple of 4 (ending in 0, 4, 8, or C) after where we ORG'd to. 
 BYTE MyDefinition // Write the byte $0D (13) at this address. 
 POP 
 ```
 
-Labels are usually put after `ALIGN 4` and have a colon : at the end of them.
+Labels have a colon `:` at the end and almost always have `ALIGN 4` before them.
 
 Neither a label nor definition actually adds any data to the rom. 
 
@@ -165,7 +165,7 @@ Generally speaking, these are the steps:
 
 Warning!
 
-Your ~16+ mb of free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of uncompressed gba screen sized video. You may be able to squeeze longer lengths in with compression, but when it comes to graphics & sound, we must be efficient with the data. 
+Your ~16+ mb of free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of uncompressed gba screen sized video. You may be able to squeeze longer lengths in with compression, but when it comes to graphics & sound, we must be efficient with the data. A buildfile is much more efficient with space than FEBuilderGBA, though, so you probably have nothing to worry about. 
 
 
 To `POIN` or not to `POIN`? 
