@@ -25,13 +25,13 @@ Table of Contents
 
 
 
-<p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
-</p>
+
 
 Understanding EA (Event Assembler)  
 -
-
+<p align="right">
+<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+</p>
 
 
 
@@ -188,8 +188,9 @@ For large tables we usually use **.CSV** (which can be processed as part of MAKE
 
 Labels vs Definitions
 -
-| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
-|----------------------------|
+<p align="right">
+<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+</p>
 
 A Label marks an address, while a definition lets a written word equate to a number. 
 
