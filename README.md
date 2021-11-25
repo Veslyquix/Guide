@@ -10,16 +10,18 @@ Table of Contents
 [Introduction](https://github.com/Veslyquix/Guide#understanding-ea-event-assembler)  
 [Labels vs Definitions](https://github.com/Veslyquix/Guide#labels-vs-definitions)  
 [Graphics Overview](https://github.com/Veslyquix/Guide#graphics-overview)  
-[To `POIN` or not to `POIN`?](https://github.com/Veslyquix/Guide#to-poin-or-not-to-poin)
+[To `POIN` or not to `POIN`?](https://github.com/Veslyquix/Guide#to-poin-or-not-to-poin)  
 [Text](https://github.com/Veslyquix/Guide#text)  
 [Chapter Events](https://github.com/Veslyquix/Guide#chapter-events)  
-[Conditional Installing](https://github.com/Veslyquix/Guide#conditional-installing)
+[Conditional Installing](https://github.com/Veslyquix/Guide#conditional-installing)  
 [Additional Terms/Commands](https://github.com/Veslyquix/Guide#additional-terms)  
 [Item Icons](https://github.com/Veslyquix/Guide#item-icons)  
 [Map Sprites](https://github.com/Veslyquix/Guide#map-sprites)  
 [~~Portraits~~]  
 [Resources](https://github.com/Veslyquix/Guide#resources)  
 [Advanced](https://github.com/Veslyquix/Guide#advanced)  
+
+---
 
 
 Understanding EA (Event Assembler)
@@ -174,6 +176,8 @@ Typically for repetitive tasks, we write out **macros** like the above ones to c
 
 For large tables we usually use **.CSV** (which can be processed as part of MAKEHACK_FULL), while for smaller ones and frequent commands we use **macros**. 
 
+---
+
 
 Labels vs Definitions
 -
@@ -200,6 +204,8 @@ Tip: Typically definition files are `#include`d before others so that your .CSV 
 Neither a label nor definition actually adds any data to the rom. 
 
 
+---
+
 
 Graphics Overview
 -
@@ -214,6 +220,8 @@ Generally speaking, these are the steps:
 Warning!
 
 Your ~16+ mb of free space would be used up by about 90 seconds of uncompressed audio or 4 seconds of uncompressed gba screen sized video. You may be able to squeeze longer lengths in with compression, but when it comes to graphics & sound, we must be efficient with the data. A buildfile is much more efficient with space than FEBuilderGBA, though, so you probably have nothing to worry about. 
+
+---
 
 
 To `POIN` or not to `POIN`? 
@@ -240,6 +248,8 @@ WORD ImageData|IsPointer
 
 `#incbin "filename.dmp"` will write the contained hex data to your rom. Similarly, `#include "filename.lyn.event"` and `#incext "filename.png" png2dmp` will install hex data. 
 
+
+---
 
 
 Text
@@ -283,6 +293,8 @@ Trainer Tips: Be careful not to have a space after [X], as TextProcess will erro
 Further reading: https://feuniverse.us/t/the-ins-and-outs-of-text-editing/6820
 
 
+---
+
 Chapter Events
 -
 
@@ -311,6 +323,8 @@ REDA definitions can be found from Snek's asm thread.
 
 
 
+---
+
 
 Conditional Installing
 -
@@ -327,6 +341,8 @@ Conditional Installing
 	#define AnotherDefinition MyDefinition // Now they're both 13
 #endif 
 ```
+
+---
 
 
 Additional terms:
@@ -371,6 +387,8 @@ PROTECT $789AB $78A00 // The bytes in this range cannot be written to.
 
 
 
+---
+
 
 Item Icons
 -
@@ -399,6 +417,8 @@ Eg.
 
 You can now refer to these definitions in your ItemTable.csv to make items use said icon. 
 
+---
+
 
 Map Sprites
 -
@@ -426,6 +446,8 @@ MMS is the same as class ID and is not set in your class table, so keep that in 
 SMS is set in your ClassTable.CSV, and you can now use the definitions you added in there. 
 
 
+---
+
 Resources
 -
 
@@ -434,6 +456,8 @@ To make your event or asm files have pretty colours for key words, please instal
 https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
 
 https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
+
+---
 
 
 Advanced
