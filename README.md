@@ -28,9 +28,8 @@ Table of Contents
 
 Understanding EA (Event Assembler)  
 -
-<p align="center">
-| [Top](https://github.com/Veslyquix/Guide#table-of-contents)    |
-|----------------------------|
+<p align="right">
+[Top](https://github.com/Veslyquix/Guide#table-of-contents)
 </p>
 
 
