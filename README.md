@@ -75,7 +75,7 @@ Calc.exe can convert between hex and dec in Programmer mode. We'll mostly use de
 
 
 
-EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to or more typically at the next part of free space or at the end of our rom. 
+EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to or more typically at the next part of free space (eg. expanding the rom past 16 mb). 
 
 
 `PUSH` and `POP` are essentially brackets ( ) to put around `ORG`. 
@@ -84,30 +84,28 @@ Eg.
 
 ```
 PUSH 
-ORG $803DA5 // Character Table - Seth's Str
+ORG $803DA5 // Character Table - Seth's Str (see above image)
 BYTE 7+5 10+3 // Give him base 12 Str and 13 Skl
 POP 
 ```
 
 Failing to put these around an `ORG` will brick your resulting rom. 
 
-In EA, we can do simple math and define things for ease. 
+In EA, we can do simple math and define things for ease.  
 
-`#define Seth 2`
-
-// Seth is character ID of 2. 
+`#define Seth 2`  
+// Seth is character ID of 2.  
 
 We can also comment out the rest of a line with slashes `//` or comment out multiple lines with `/*    */`. 
 
 
-
-What if we want to write stats to a bunch of characters?
+Let's generalize a way to write base stats to *any* character!
 
 Your CharacterTable probably starts at $803D30. see root/Tables/Table Definitions.txt
 
 > `#define CharacterTable 0x803D30`
 
-Let's define its size! 
+
 
 ![Alt-text](/png/CharTableSize.png?raw=true "Optional Title")
 
@@ -115,8 +113,7 @@ Let's define its size!
 ```
 #define CharTableSize 52
 ```
-
-Now let's make it easy to edit anyone's base stats. 
+First we define its size.
 
 
 ```
@@ -125,29 +122,29 @@ Now let's make it easy to edit anyone's base stats.
 First, we define which character to edit. `Franz` is defined as his character ID, `4`, in EA's standard library (`EAstdlib.event`).  
 
 
-`PUSH` 
-Open bracket.
+`PUSH`  
+Open bracket.  
 
-`ORG CharacterTable` 
-Address to originate at. 
+`ORG CharacterTable`  
+Address to originate at.   
 
-`ORG CURRENTOFFSET + (CharTableSize * CurrentChar)` 
-Each entry has 52 bytes, so the character entry we want is equal to Size*CharacterID. 
+`ORG CURRENTOFFSET + (CharTableSize * CurrentChar)`   
+Each entry has 52 bytes, so the character entry we want is equal to Size*CharacterID.   
 
-`ORG CURRENTOFFSET + BaseStrOffset`
-Now we go forward $0D bytes to get to Str.  
+`ORG CURRENTOFFSET + BaseStrOffset`  
+Now we go forward $0D bytes to get to Str.    
 
-`BYTE (5*2)` 
-Give Franz base 10 Str 
+`BYTE (5*2)`   
+Give Franz base 10 Str   
 
-`POP` 
-Close bracket. 
+`POP`   
+Close bracket.   
 
-`#undef CurrentChar`
-Undefine `CurrentChar` so we can use it again without EA giving us a warning. 
+`#undef CurrentChar`  
+Undefine `CurrentChar` so we can use it again without EA giving us a warning.   
 
 
-This absolutely works, but it's not ideal to write out so much every time. Let's consolidate it! 
+This absolutely works, but it's not ideal to write out so much every time. Let's consolidate it!  
 
 
 ```
