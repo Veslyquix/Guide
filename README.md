@@ -386,16 +386,16 @@ Bitfield:
 Instead of counting to 255 with a byte, we use each bit in binary as a yes / no flag. 
 
 
-Common abbreviations:
-
-MMS - Moving Map Sprite 
-SMS - Standing Map Sprite 
-
-Hacks:
-
-MSS - Modular Stat Screen 
-MMB - Modular Minimug Box 
-EMS - Expanded Modular Save 
+Common abbreviations:  
+  
+MMS - Moving Map Sprite   
+SMS - Standing Map Sprite   
+  
+Hacks:  
+  
+MSS - Modular Stat Screen   
+MMB - Modular Minimug Box   
+EMS - Expanded Modular Save   
 
 
 
