@@ -33,9 +33,7 @@ Calc.exe can convert between hex and dec in Programmer mode. We'll mostly use de
 
 
 
-`#define Seth 2`
 
-// Seth is character ID of 2. 
 
 
 ![Alt-text](/png/Seth_Str.png?raw=true "Optional Title")
@@ -49,7 +47,7 @@ Calc.exe can convert between hex and dec in Programmer mode. We'll mostly use de
 EA automatically writes to our `CURRENTOFFSET`, which is where we've `ORG`'d to or more typically at the next part of free space or at the end of our rom. 
 
 
-`PUSH` and `POP` are essentially brackets ( ) to put around `ORG` 
+`PUSH` and `POP` are essentially brackets ( ) to put around `ORG`. 
 
 Eg. 
 
@@ -61,6 +59,15 @@ POP
 ```
 
 Failing to put these around an `ORG` will brick your resulting rom. 
+
+In EA, we can do simple math and define things for ease. 
+
+`#define Seth 2`
+
+// Seth is character ID of 2. 
+
+We can also comment out the rest of a line with slashes `//` or comment out multiple lines with `/*    */`. 
+
 
 
 What if we want to write stats to a bunch of characters?
@@ -83,14 +90,31 @@ Now let's make it easy to edit anyone's base stats.
 
 ```
 #define CurrentChar Franz
-PUSH
-ORG CharacterTable
-ORG CURRENTOFFSET + (CharTableSize * CurrentChar) // Each entry has 52 bytes, so the character entry we want is equal to Size*CharacterID. 
-ORG CURRENTOFFSET + BaseStrOffset // Now we go forward $0D bytes to get to Str.  
-BYTE (5*2) // Give Franz base 10 Str 
-POP 
-#undef CurrentChar
 ```
+First, we define which character to edit. `Franz` is defined as his character ID, `4`, in EA's standard library (`EAstdlib.event`).  
+
+
+`PUSH` 
+Open bracket.
+
+`ORG CharacterTable` 
+Address to originate at. 
+
+`ORG CURRENTOFFSET + (CharTableSize * CurrentChar)` 
+Each entry has 52 bytes, so the character entry we want is equal to Size*CharacterID. 
+
+`ORG CURRENTOFFSET + BaseStrOffset`
+Now we go forward $0D bytes to get to Str.  
+
+`BYTE (5*2)` 
+Give Franz base 10 Str 
+
+`POP` 
+Close bracket. 
+
+`#undef CurrentChar`
+Undefine `CurrentChar` so we can use it again without EA giving us a warning. 
+
 
 This absolutely works, but it's not ideal to write out so much every time. Let's consolidate it! 
 
@@ -148,6 +172,8 @@ POP
 ```
 
 Labels have a colon `:` at the end and almost always have `ALIGN 4` before them.
+
+Tip: Typically definition files are `#include`d before others so that your .CSV tables and .event files can refer to them. 
 
 Neither a label nor definition actually adds any data to the rom. 
 
@@ -258,6 +284,7 @@ UNIT
 #undef GenericEnemyLevel // So we can use the same definition next chapter. 
 ```
 
+REDA definitions can be found from Snek's asm thread. 
 
 
 
@@ -328,6 +355,9 @@ Item Icons
 ![Alt-text](/png/ItemIconsPreview.png?raw=true "Optional Title")
 
 - Put item icons into the `png` folder. 
+
+![Alt-text](/png/ItemIconsSteps.png?raw=true "Optional Title")
+
 - Run "GenerateMapSpritesInstaller.bat"
 - - This will also rename your images, removing `,() {}-`. 
 - Run "Png2DmpImages.bat"
@@ -335,7 +365,7 @@ Item Icons
 - - Eg. Root/Somefolder/THISFOLDER is where we are.
 - - but Root/EventAssembler/Tools/Png2Dmp.exe is where it expects it. 
 
-![Alt-text](/png/ItemIconsSteps.png?raw=true "Optional Title")
+
 
 Copy the ItemIconID definitions into your relevant CustomDefinitions file. 
 Eg. 
@@ -361,7 +391,7 @@ Put standing map sprites into the `sms` folder and moving map sprites into the `
 
 Copy part of "GeneratedInstaller.event" into "Installer.event" to edit the SMS Size or MMS AP. 
 
-Copy the definitions into the `Installer.event` or your relevant CustomDefinitions file. 
+Copy the definitions into your relevant CustomDefinitions file. 
 Eg.
 ```
 #define Cavalier_M_Sword_SALVAGEDstand 107 
@@ -382,7 +412,7 @@ Injecting Custom Code
 -
 
 If you want to change the mechanics of the game, you want to **hook** an address (which must be ALIGN 4'd aka ending in 0, 4, 8, or C), or replace a vanilla `POIN`. 
-ASM wise, you want to ensure there's a free register to use and that you `PUSH` & `POP` registers you use. You can then return to the vanilla function if desired by loading the address into a register, and `bx`ing to it, or by `POP`ing `lr` into a **scratch** register and `bx`ing to it. 
+ASM wise, you want to ensure there's a free register to use and that you `PUSH` & `POP` registers you use. You can then return to the vanilla function if desired by loading the address into a register, and `bx`ing to it (if you used jumpToHack), or by `POP`ing `lr` into a **scratch** register and `bx`ing to it (if you used callHack). 
 
 Finding a POIN: 
 
@@ -401,7 +431,7 @@ callHack_r3(StabBonusFunc|1) // When using asm / thumb, addresses must end in 1,
 
 ORG $9B788 
 jumpToHack_r2(DisplayDurabilitySupply) 
-SHORT 0x46C0 // NOP out `ldrh r6, [r0]` 
+SHORT 0x46C0 // Replace the code `ldrh r6, [r0]` with NOP / no operation.  
 POP
 
 ALIGN 4 
