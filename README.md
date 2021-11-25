@@ -1,8 +1,30 @@
 # Guide
  
+Table of Contents
+-
+
+---
+
+
+
+[Introduction](https://github.com/Veslyquix/Guide#understanding-ea-event-assembler)  
+[Labels vs Definitions](https://github.com/Veslyquix/Guide#labels-vs-definitions)  
+[Graphics Overview](https://github.com/Veslyquix/Guide#graphics-overview)  
+[To `POIN` or not to `POIN`?](https://github.com/Veslyquix/Guide#to-poin-or-not-to-poin)
+[Text](https://github.com/Veslyquix/Guide#text)  
+[Chapter Events](https://github.com/Veslyquix/Guide#chapter-events)  
+[Conditional Installing](https://github.com/Veslyquix/Guide#conditional-installing)
+[Additional Terms/Commands](https://github.com/Veslyquix/Guide#additional-terms)  
+[Item Icons](https://github.com/Veslyquix/Guide#item-icons)  
+[Map Sprites](https://github.com/Veslyquix/Guide#map-sprites)  
+[~~Portraits~~]  
+[Resources](https://github.com/Veslyquix/Guide#resources)  
+[Advanced](https://github.com/Veslyquix/Guide#advanced)  
+
 
 Understanding EA (Event Assembler)
 -
+
 
 Your .gba rom is made up of `BYTE`s, or digits from $00 to $FF, expressed as 0 to 255 in decimal. It is mostly unintelligable. 
 
@@ -323,8 +345,16 @@ Bitfield:
 Instead of counting to 255 with a byte, we use each bit in binary as a yes / no flag. 
 
 
+Common abbreviations:
 
+MMS - Moving Map Sprite 
+SMS - Standing Map Sprite 
 
+Hacks:
+
+MSS - Modular Stat Screen 
+MMB - Modular Minimug Box 
+EMS - Expanded Modular Save 
 
 
 
@@ -339,14 +369,7 @@ PROTECT $789AB // The byte at this address cannot be written to (EA will error).
 PROTECT $789AB $78A00 // The bytes in this range cannot be written to. 
 ```
 
-Resources
--
 
-To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
-
-https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
-
-https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
 
 
 Item Icons
@@ -401,6 +424,16 @@ Eg.
 MMS is the same as class ID and is not set in your class table, so keep that in mind. Eg. if you want to replace EirikaLord's MMS, you must have the definition be 1. 
 
 SMS is set in your ClassTable.CSV, and you can now use the definitions you added in there. 
+
+
+Resources
+-
+
+To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
+
+https://feuniverse.us/t/syntax-highlighting-for-event-assembler/2131
+
+https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
 
 
 Advanced
