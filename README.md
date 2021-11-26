@@ -30,7 +30,7 @@ Table of Contents
 Understanding EA (Event Assembler)  
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 
@@ -186,7 +186,7 @@ For large tables we usually use **.CSV** (which can be processed as part of MAKE
 Labels vs Definitions
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 A Label marks an address, while a definition lets a written word equate to a number. 
@@ -217,7 +217,7 @@ Neither a label nor definition actually adds any data to the rom.
 Graphics Overview
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 Generally speaking, these are the steps: 
@@ -237,7 +237,7 @@ Your ~16+ mb of free space would be used up by about 90 seconds of uncompressed 
 To `POIN` or not to `POIN`? 
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 $00123456 vs $08123456 
@@ -268,7 +268,7 @@ WORD ImageData|IsPointer
 Text
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 Text is typically only edited within the `Root/Text` subfolder. You *can* use the String("Text") macro for the rare simple thing, but I believe it's only useful for raw text (eg. lacking shortforms like [OpenRight]). 
@@ -314,7 +314,7 @@ Further reading: https://feuniverse.us/t/the-ins-and-outs-of-text-editing/6820
 Chapter Events
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 Sme wrote an excellent guide on this. You must read it. https://feuniverse.us/t/fe8-ea-eventing-guide/7080
@@ -348,7 +348,7 @@ REDA definitions can be found from Snek's asm thread.
 Conditional Installing
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 `#ifdef` and `#ifndef` lets you install something or not based on whether a definition has been made or not. 
@@ -370,7 +370,7 @@ Conditional Installing
 Additional terms:
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 Word - 4 bytes 
@@ -418,7 +418,7 @@ PROTECT $789AB $78A00 // The bytes in this range cannot be written to.
 Item Icons
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 ![Alt-text](/png/ItemIconsPreview.png?raw=true "Optional Title")
@@ -451,7 +451,7 @@ You can now refer to these definitions in your ItemTable.csv to make items use s
 Map Sprites
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 Put standing map sprites into the `sms` folder and moving map sprites into the `mms` folder. 
@@ -482,7 +482,7 @@ SMS is set in your ClassTable.CSV, and you can now use the definitions you added
 Resources
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 To make your event or asm files have pretty colours for key words, please install these language files to your text editor:
@@ -497,7 +497,7 @@ https://feuniverse.us/t/asm-notepad-thumb-assembly-syntax-highlighting/529
 Advanced
 -
 <p align="right">
-<a href="https://github.com/Veslyquix/Guide#table-of-contents)">Top</a>
+<a href="https://github.com/Veslyquix/Guide#table-of-contents">Top</a>
 </p>
 
 Do not bother reading this section until you actually want to do asm yourself. 
@@ -534,12 +534,3 @@ StabBonusFunc: // Address will end in 0, 4, 8, or C, so references to it must in
 
 #include "DisplayDurabilitySupply.lyn.event"
 ```
-
-
-
-
-
-
-
-
-
