@@ -119,7 +119,7 @@ First we define its size.
 ```
 #define CurrentChar Franz
 ```
-First, we define which character to edit. `Franz` is defined as his character ID, `4`, in EA's standard library (`EAstdlib.event`).  
+Next, we define which character to edit. `Franz` is defined as his character ID, `4`, in EA's standard library (`EAstdlib.event`).  
 
 
 `PUSH`  
